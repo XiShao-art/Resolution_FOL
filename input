@@ -1,0 +1,3 @@
+not implies ( forAll x and ( A ( x ) , B ( x ) ) , and ( forAll x A ( x ) , forAll x B ( x ) ) )
+not or ( P ( x ) , A ( x ) )
+implies ( exist x    D ( x ) , forAll y D ( y ) )
