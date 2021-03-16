@@ -1,24 +1,8 @@
-# class Predicate:
-#     def __init__(self, name: str, arguments: [], positive: bool):
-#         self.name = name
-#         self.arguments = arguments
-#         self.positive = positive
-#
-#     def get(self,z ):
-#         s = self.name+ str(self.arguments)
-#         if not self.positive:
-#             s='~' + s
-#
-#         return s
-
-'''
-This is class for the quantity:
-for all, exists
-'''
 OPERATIONS = ['and', 'or', 'implies']
 QUANTIFIES = ['exist', 'forAll']
 VARIABLES = []
 PREDICATES = []
+FUNCTIONS = []
 CONSTANTS = []
 
 for i in range(97, 109):
@@ -27,12 +11,22 @@ for i in range(97, 109):
 for i in range(109, 123):
     VARIABLES.append(str(chr(i)))  # lowercase letters a to l
 
-for i in range(65, 91):
+for i in range(65, 77):
+    FUNCTIONS.append(str(chr(i)))# uppercase letters
+for i in range(77, 91):
     PREDICATES.append(str(chr(i)))# uppercase letters
 
 def listPrinter(sentence):
     for  i in sentence:
         print(i, end =  ' ')
+
+def tree_print(root):
+    if root!=None:
+        tree_print(root.left)
+        print(root)
+        tree_print(root.right)
+
+
 class Quantity:
     def __init__(self, variable: str, index):
         self.forAll = True
@@ -48,37 +42,53 @@ class Node:
         self.right = None
 
 
-    def negated(self):
-        if self.isOperation:
-            if self.name == 'and':
-                self.name = 'or'
-                self.right.negated()
-                self.left.negated()
-            elif self.name == 'or':
-                self.name = 'and'
-                self.right.negated()
-                self.left.negated()
-            elif self.name == 'implies':
-                self.name = 'and'
-                self.right.negated()
-
-        else :
-            self.negation = not self.negation
+    # def negated(self):
+    #     if self.isOperation:
+    #         if self.name == 'and':
+    #             self.name = 'or'
+    #             self.right.negated()
+    #             self.left.negated()
+    #         elif self.name == 'or':
+    #             self.name = 'and'
+    #             self.right.negated()
+    #             self.left.negated()
+    #         elif self.name == 'implies':
+    #             self.name = 'and'
+    #             self.right.negated()
+    #
+    #     else :
+    #         self.negation = not self.negation
 
     def __str__(self):
         return self.name
 
-class operation(Node):
+class Operation(Node):
     def __init__(self, Name:str):
         Node.__init__(self, Name)
         self.isOperation = True
 
 
 class Predicate(Node):
-    def __init__(self, Name:str, arguments):
+    def __init__(self, Name:str):
         Node.__init__(self, Name)
-        self.arguments = arguments
+        self.arguments = []
         self.isOperation = False
+    # def __str__(self):
+    #     s=''
+    #     for i in self.arguments:
+    #         s+=str(i)+' '
+    #     return self.name+' arg: '+s
+
+class Function(Node):
+    def __init__(self, Name:str):
+        Node.__init__(self, Name)
+        self.arguments = []
+        self.isOperation = False
+    # def __str__(self):
+    #     s=''
+    #     for i in self.arguments:
+    #         s+=str(i)+' '
+    #     return self.name+' arg: '+s
 
 class Constant(Node):
     def __init__(self, Name:str):
@@ -92,7 +102,10 @@ class Variable(Node):
         self.scope = []
 
     def __str__(self):
-        return 'var'+' '+self.name+  ' '+str(self.scope)
+        s=''
+        for i in self.scope:
+            s+=i.name+','
+        return self.name+  '('+s+') '
 
 class FOL_Engine:
     def __init__(self):
@@ -101,6 +114,7 @@ class FOL_Engine:
         self.predicates = PREDICATES
         self.quantifies = QUANTIFIES
         self.constants = CONSTANTS
+        self.functions = FUNCTIONS
 
 def removeImplies(sentence):
     while('implies' in sentence):
@@ -179,8 +193,8 @@ def pushNegation(sentence, fol_engine):
                     new_sentence.append(sentence[old_sentence_index])
                     old_sentence_index += 1
             sentence = new_sentence
-            listPrinter((sentence))
-            print()
+            # listPrinter((sentence))
+            # print()
 
 
 
@@ -188,7 +202,7 @@ def pushNegation(sentence, fol_engine):
     return sentence
 
 
-def defineScope(sentence):
+def defineScope(sentence, fol_engine):
     # define the scope of all variable
     for quantify_index in range(len(sentence)):
         if sentence[quantify_index] in fol_engine.quantifies:
@@ -213,6 +227,8 @@ def defineScope(sentence):
                         if sentence[index] == 'exist':
                             quantify.forAll = False
                         sentence[index].scope.append(quantify)
+                        if sentence[index].name == quantify.variable:
+                            sentence[index].name = quantify.name
                     elif sentence[index] == '(':
                         leftbracket += 1
                     elif sentence[index] == ')':
@@ -220,7 +236,70 @@ def defineScope(sentence):
 
                 else:
                     break
+
+    #remove quntity
+    for i in range(len(sentence)):
+        if sentence[i] in fol_engine.quantifies:
+            sentence[i]=' '
+            sentence[i+1]=' '
+    while ' ' in sentence:
+        sentence.remove(' ')
     return sentence
+
+def VarConst2Node(sentence, fol_engine):
+    for i in range(len(sentence)):
+        if sentence[i] in fol_engine.constants:
+            sentence[i] = Constant(sentence[i])
+        elif sentence[i] in fol_engine.variables and sentence[i-1] not in fol_engine.quantifies:
+            sentence[i] = Variable(sentence[i])
+    return sentence
+
+def All2Node(sentence, fol_engine):
+    for i in range(len(sentence)):
+        if sentence[i] in fol_engine.operations:
+            sentence[i] = Operation(sentence[i])
+        elif sentence[i] in fol_engine.predicates:
+            sentence[i] = Predicate(sentence[i])
+        elif sentence[i] in fol_engine.functions:
+            sentence[i] = Function(sentence[i])
+
+    #convert all predicet to node
+    stack = []
+    for ele in sentence:
+        listPrinter(stack)
+        print()
+        if ele !=')':
+            stack.append(ele)
+        elif ele ==')':
+            tempStack = []
+            while stack[-1] != '(':
+                if stack[-1] != ',':
+                    tempStack.append(stack.pop())
+                else :
+                    stack.pop()
+            stack.pop()
+            if len(stack)!= 0:
+                if type(stack[-1])==Function or type(stack[-1])==Predicate:
+                    tempStack.reverse()
+                    stack[-1].arguments = tempStack
+                    listPrinter(tempStack)
+                    print()
+                elif type(stack[-1])==Operation:
+                    tempStack.reverse()
+                    stack[-1].left  = tempStack[0]
+                    stack[-1].right = tempStack[1]
+                    listPrinter(tempStack)
+                    print()
+                else:
+                    while len(tempStack)!=0:
+                        stack.append(tempStack.pop())
+            else:
+                while len(tempStack) != 0:
+                    stack.append(tempStack.pop())
+    return stack[0]
+
+
+
 
 def sentence_parse(fol_engine: FOL_Engine, sentence: str) :
     sentence = sentence.split()
@@ -229,38 +308,31 @@ def sentence_parse(fol_engine: FOL_Engine, sentence: str) :
 
     sentence = pushNegation(sentence, fol_engine)
     listPrinter(sentence)
+    print()
 
+    sentence = VarConst2Node(sentence, fol_engine)  # change constant and varaiable to node
 
-    # change constant and varaiable to node
-    for i in range(len(sentence)):
-        if sentence[i] in fol_engine.constants:
-            sentence[i] = Constant(sentence[i])
-        elif sentence[i] in fol_engine.variables and sentence[i-1] not in fol_engine.quantifies:
-            sentence[i] = Variable(sentence[i])
+    sentence = defineScope(sentence, fol_engine)
+    listPrinter(sentence)
+    print()
 
-
-    sentence = defineScope(sentence)
-
-
-
-
-    return sentence
+    rootNode = All2Node(sentence, fol_engine)
+    tree_print(rootNode)
+    return rootNode
 
 
 if __name__ == '__main__':
 
     fol_engine = FOL_Engine()
-    for i in sentence_parse(fol_engine,input()):
-       # print(i)
-        pass
+    sentence_parse(fol_engine,input())
+
 
    #  a = ['a','b','a']
    #
    #  print(a)
    #  fol_engine = FOL_Engine()
    # # for i in sentence_parse(fol_engine,input()):
-   #  a = Variable(1)
-   #  print(type(a) == Variable)
+
 
 
 
