@@ -9,9 +9,11 @@ def iterate_unify(p, key,dic):
         elif type(p.arguments[i]) == Function:
             iterate_unify(p.arguments[i], key, dic)
 
+'''
+find if it have one avaliable unify and update the predicate
+run until no avaliable unfiy can be find
+'''
 def MGU(p1:Predicate, p2:Predicate, allUni):
-
-
     unify = {}
     if len(p1.arguments) != len(p2.arguments):
         return None, unify
@@ -94,15 +96,10 @@ def MGU(p1:Predicate, p2:Predicate, allUni):
         return p1, allUni
 
 
-
-
-
-
-
-
-
-
-
+'''
+if f1 contains v1, it can never unify,
+check wether it have 
+'''
 def check_var_fun(v1:Variable, f1:Function):
     flag = True
     for para in f1.arguments:
@@ -112,6 +109,11 @@ def check_var_fun(v1:Variable, f1:Function):
             flag = flag and check_var_fun(v1, para)
     return flag
 
+'''
+first f1 and f2 should have same name
+the arg crrospond func should not have the arg
+like: f(g(x), y), f(x,y). It can never unify
+'''
 def check_fun_fun(f1:Function, f2:Function):
     flag = True
     if f1.name != f2.name:
@@ -127,38 +129,39 @@ def check_fun_fun(f1:Function, f2:Function):
           #  elif (type(f2.arguments[i])==Constant and type(f1.arguments[i])==Function) or :
     return flag
 
-p1 =    Predicate('p')
-p2 =    Predicate('p')
-x =     Variable('x')
-y =     Variable('y')
-z =     Variable('z')
-a = Constant('a')
-b = Constant('b')
-g_x= Function('g_x')
-g_y= Function('g_y')
-g_z= Function('g_z')
-h_x= Function('h_x')
+'''
+some test cases
+'''
+if __name__ == '__main__':
+    p1 =    Predicate('p')
+    p2 =    Predicate('p')
+    x =     Variable('x')
+    y =     Variable('y')
+    z =     Variable('z')
+    a = Constant('a')
+    b = Constant('b')
+    g_x= Function('g_x')
+    g_y= Function('g_y')
+    g_z= Function('g_z')
+    h_x= Function('h_x')
 
-g_x.arguments.append(x)
-g_x.arguments.append(y)
+    g_x.arguments.append(x)
+    g_x.arguments.append(y)
 
-g_z.arguments.append(z)
+    g_z.arguments.append(z)
 
+    g_y.arguments.append(a)
+    g_y.arguments.append(y)
 
-g_y.arguments.append(a)
-g_y.arguments.append(y)
+    g_y.name ='g_x'
 
-g_y.name ='g_x'
+    p1.arguments.append(y)
+    p1.arguments.append(g_x)
+    p2.arguments.append(b)
+    p2.arguments.append(g_y)
 
-p1.arguments.append(y)
-p1.arguments.append(g_x)
-p2.arguments.append(b)
-p2.arguments.append(g_y)
-
-
-
-pre,dic = MGU(p1, p2, {})
-print(pre, dic)
+    pre,dic = MGU(p1, p2, {})
+    print(pre, dic)
 
 
 
