@@ -62,17 +62,38 @@ class Node:
     def __str__(self):
         return self.name
 
-class Operation(Node):
+class Operation(Node,object):
     def __init__(self, Name:str):
         Node.__init__(self, Name)
         self.isOperation = True
+    def copy(self):
+        v1 = Operation(self.name)
+
+        return v1
+
+    def equals(self,v):
+        return v.name ==self.name
 
 
-class Predicate(Node):
+
+class Predicate(Node,object):
     def __init__(self, Name:str):
         Node.__init__(self, Name)
         self.arguments = []
         self.isOperation = False
+    def copy(self):
+        v1 = Predicate(self.name)
+        v1.arguments = []
+        for arg in self.arguments:
+            v1.arguments.append(arg.copy())
+        return v1
+
+    def equals(self,v):
+        flag = v.name == self.name
+        for arg_index in range(len(self.arguments)):
+            flag = flag and self.arguments[arg_index].equals(v.arguments[arg_index])
+        return flag
+
     def __str__(self):
         s='[ '
         for i in self.arguments:
@@ -93,16 +114,41 @@ class Function(Node):
             s+=str(i)+' '
         return self.name+' '+s+']'
 
+    def copy(self):
+        v1 = Function(self.name)
+        v1.arguments = []
+        for arg in self.arguments:
+            v1.arguments.append(arg.copy())
+        return v1
+
+    def equals(self,v):
+        flag = v.name == self.name
+        for arg_index in range(len(self.arguments)):
+            flag = flag and self.arguments[arg_index].equals(v.arguments[arg_index])
+        return flag
+
+
+
 class Constant(Node):
     def __init__(self, Name:str):
         Node.__init__(self, Name)
         self.isOperation = False
+    def copy(self):
+        v1 = Constant(self.name)
+        return v1
+    def equals(self,v):
+        return v.name ==self.name
 
-class Variable(Node):
+class Variable(Node,object):
     def __init__(self, Name:str):
         Node.__init__(self, Name)
         self.isOperation = False
         self.scope = []
+    def copy(self):
+        v1 = Variable(self.name)
+        return v1
+    def equals(self,v):
+        return v.name ==self.name
 
     # def __str__(self):
     #     s=''

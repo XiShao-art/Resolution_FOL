@@ -1,0 +1,59 @@
+p1 =    Predicate('p')
+p2 =    Predicate('p')
+x =     Variable('x')
+y =     Variable('y')
+z =     Variable('z')
+a = Constant('a')
+b = Constant('b')
+g_x= Function('g_x')
+g_y= Function('g_y')
+g_z= Function('g_z')
+h_x= Function('h_x')
+
+#1. p(a,x) p(y,y)
+g_y.arguments.append(y)
+g_x.arguments.append(x)
+p1.arguments.append(a)
+p1.arguments.append(x)
+p2.arguments.append(y)
+p2.arguments.append(y)
+
+#2. p(g(x),z) p(g(y),g(z))
+g_y.arguments.append(y)
+g_x.arguments.append(x)
+g_z.arguments.append(z)
+p1.arguments.append(g_x)
+p1.arguments.append(z)
+p2.arguments.append(g_y)
+p2.arguments.append(g_z)
+
+#3. p(y,f(x,y)) p(g(z),f(a,z))
+g_x.arguments.append(x)
+g_x.arguments.append(y)
+
+g_z.arguments.append(z)
+
+
+g_y.arguments.append(a)
+g_y.arguments.append(z)
+p1.arguments.append(y)
+p1.arguments.append(g_x)
+p2.arguments.append(g_z)
+p2.arguments.append(g_y)
+
+#4. p(y,f(x,y)) p(b,f(a,y))
+g_x.arguments.append(x)
+g_x.arguments.append(y)
+
+g_z.arguments.append(z)
+
+
+g_y.arguments.append(a)
+g_y.arguments.append(y)
+
+g_y.name ='g_x'
+
+p1.arguments.append(y)
+p1.arguments.append(g_x)
+p2.arguments.append(b)
+p2.arguments.append(g_y)

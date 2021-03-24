@@ -2,3 +2,4 @@ not implies ( forAll x or ( P ( x ) , Q ( x ) ) , and ( forAll x P ( x , x , x ,
 not or ( P ( x , x , y  ) , Q ( x ) )
 forAll z ( implies ( exist x  forAll y ( P ( F ( x ) , x , y , z ) ) , exist y ( Q ( y ) ) ) )
 or ( and ( P ( x ) , Q ( x ) ) , and ( X ( x ) , Z ( x ) ) )
+not and ( exist x  P ( x ) , forAll x  Q ( x ) )
