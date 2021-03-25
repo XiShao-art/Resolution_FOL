@@ -15,10 +15,10 @@ for i in range(97, 109):
 for i in range(109, 123):
     VARIABLES.append(str(chr(i)))  # lowercase letters a to l
 
-for i in range(65, 77):
-    FUNCTIONS.append(str(chr(i)))# uppercase letters
+# for i in range(65, 77):
+#     FUNCTIONS.append(str(chr(i)))# uppercase letters
 
-for i in range(77, 91):
+for i in range(65, 91):
     PREDICATES.append(str(chr(i)))# uppercase letters
 
 
@@ -84,6 +84,7 @@ class Predicate(Node,object):
     def copy(self):
         v1 = Predicate(self.name)
         v1.arguments = []
+        v1.negation = self.negation
         for arg in self.arguments:
             v1.arguments.append(arg.copy())
         return v1

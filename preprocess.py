@@ -43,6 +43,10 @@ def pushNegation(sentence, fol_engine):
                     new_sentence.append(sentence[old_sentence_index + 1])
                     new_sentence.append('not')
                     old_sentence_index += 2
+                elif sentence[old_sentence_index] == '(':
+                    new_sentence.append('(')
+                    new_sentence.append('not')
+                    old_sentence_index += 1
 
                 elif sentence[old_sentence_index] == 'not':
                     old_sentence_index+=1
@@ -201,8 +205,7 @@ def All2Node(sentence, fol_engine):
                     stack[-1].right = tempStack[1]
                     stack[-1].left.parent = stack[-1]
                     stack[-1].right.parent = stack[-1]
-                    # listPrinter(tempStack)
-                    # print()
+
                 else:
                     while len(tempStack)!=0:
                         stack.append(tempStack.pop())
@@ -285,23 +288,22 @@ def sentence_parse(fol_engine: FOL_Engine, sentence: str) :
     sentence = removeImplies(sentence)
 
     sentence = pushNegation(sentence, fol_engine)
-    listPrinter(sentence)
-    print()
+    #listPrinter(sentence)
+    #print('\n')
 
     sentence = VarConst2Node(sentence, fol_engine)  # change constant and varaiable to node
 
 
     sentence = defineScope(sentence, fol_engine)
 
-    listPrinter(sentence)
-    print()
-
+    #listPrinter(sentence)
+    #print()
 
     rootNode = All2Node(sentence, fol_engine)
     skolemization(rootNode, fol_engine)
     convert2CNF(rootNode)
 
-    tree_print(rootNode)
+   # tree_print(rootNode)
 
 
     return rootNode

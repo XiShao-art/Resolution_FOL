@@ -3,3 +3,17 @@ not or ( P ( x , x , y  ) , Q ( x ) )
 forAll z ( implies ( exist x  forAll y ( P ( F ( x ) , x , y , z ) ) , exist y ( Q ( y ) ) ) )
 or ( and ( P ( x ) , Q ( x ) ) , and ( X ( x ) , Z ( x ) ) )
 not and ( exist x  P ( x ) , forAll x  Q ( x ) )
+
+#barber
+forAll x forAll y ( implies ( and ( B ( x ) , not S ( y , y ) ) , S ( x , y ) ) )
+not exist x ( and ( B ( x ) , S ( x , x ) ) )
+forAll x ( not B ( x ) )
+
+#worksheet2 3.1
+exist x forAll y P ( y , x )
+forAll x exist y P ( y , x )
+
+#worksheet2 3.2
+forAll x implies ( P ( x ) , Q ( x ) )
+implies ( forAll x P ( x ) , forAll x Q ( x ) )
+

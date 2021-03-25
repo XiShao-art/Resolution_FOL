@@ -1,13 +1,6 @@
 from FOL import *
+from utils import *
 
-def iterate_unify(p, key,dic):
-    #print(p)
-    for i in range(len(p.arguments)):
-        if p.arguments[i].name ==key:
-            p.arguments[i] = dic[key].copy()
-
-        elif type(p.arguments[i]) == Function:
-            iterate_unify(p.arguments[i], key, dic)
 
 '''
 find if it have one avaliable unify and update the predicate
@@ -79,10 +72,10 @@ def MGU(p1:Predicate, p2:Predicate, allUni):
         p1 = p1.copy()
         p2 = p2.copy()
         key = list(unify.keys())[-1]
-        print('before',p1, p2, unify.keys(), unify[list(unify.keys())[0]])
-        iterate_unify(p1,key,unify)
-        iterate_unify(p2, key, unify)
-        print('after',p1, p2, unify.keys(), unify[list(unify.keys())[0]])
+        #print('before',p1, p2, unify.keys(), unify[list(unify.keys())[0]])
+        iterate_unify_pre(p1,key,unify)
+        iterate_unify_pre(p2, key, unify)
+        #print('after',p1, p2, unify.keys(), unify[list(unify.keys())[0]])
 
         allUni.update(unify)
         return MGU(p1,p2, allUni)
@@ -161,7 +154,7 @@ if __name__ == '__main__':
     p2.arguments.append(g_y)
 
     pre,dic = MGU(p1, p2, {})
-    print(pre, dic)
+   # print(pre, dic)
 
 
 
