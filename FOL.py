@@ -15,10 +15,10 @@ for i in range(97, 109):
 for i in range(109, 123):
     VARIABLES.append(str(chr(i)))  # lowercase letters a to l
 
-# for i in range(65, 77):
-#     FUNCTIONS.append(str(chr(i)))# uppercase letters
+for i in range(65, 77):
+    FUNCTIONS.append(str(chr(i)))# uppercase letters
 
-for i in range(65, 91):
+for i in range(77, 91):
     PREDICATES.append(str(chr(i)))# uppercase letters
 
 
@@ -96,13 +96,14 @@ class Predicate(Node,object):
         return flag
 
     def __str__(self):
-        s='[ '
+        s='( '
         for i in self.arguments:
+
             s+=str(i)+' '
         if self.negation:
-            return '-'+self.name+' '+s+']'
+            return '-'+self.name+' '+s+')'
         else:
-            return self.name + ' ' + s + ']'
+            return self.name + ' ' + s + ')'
 
 class Function(Node):
     def __init__(self, Name:str):
@@ -110,10 +111,10 @@ class Function(Node):
         self.arguments = []
         self.isOperation = False
     def __str__(self):
-        s='[ '
+        s='( '
         for i in self.arguments:
             s+=str(i)+' '
-        return self.name+' '+s+']'
+        return self.name+' '+s+')'
 
     def copy(self):
         v1 = Function(self.name)

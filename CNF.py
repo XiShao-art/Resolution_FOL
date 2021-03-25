@@ -41,4 +41,6 @@ def convert2CNF(root):
     convert2CNF(root.left)
     convert2CNF(root.right)
 
+if __name__ == '__main__':
+    pass
 

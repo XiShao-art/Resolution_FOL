@@ -1,5 +1,14 @@
 from  FOL import  *
 
+def print_unify(p1,dic):
+    if p1 == None:
+        print("no unifiable")
+        return
+    print(p1, end = ' , ')
+    keys = list(dic.keys())
+    for key in keys:
+        print(key,'=>',dic[key], end = "; ")
+    print()
 def listPrinter(sentence):
     for  i in sentence:
         print(i, end =  ' ')
@@ -33,6 +42,8 @@ def iterate_unify_pre(p, key, dic):
             iterate_unify_pre(p.arguments[i], key, dic)
 def iterate_unify_sentence(sentence, dic):
     sentence = sentence.copy()
+    for sen in range(len(sentence)):
+        sentence[sen] = sentence[sen].copy()
     keys = list(dic.keys())
     for p in sentence:
         for key in keys:
@@ -65,20 +76,33 @@ def tree2KB(root):
     while len(stack) != 0:
         temp = stack.pop()
         if temp.name=='and':
-            if type(temp.left)!= Operation:
+            if type(temp.left)!= Operation and not ifContains(KB, [temp.left]):
                 KB.append([temp.left])
             else:
                 stack.append(temp.left)
 
-            if type(temp.right) != Operation:
+            if type(temp.right) != Operation and not ifContains(KB, [temp.right]):
                 KB.append([temp.right])
             else:
                 stack.append(temp.right)
         elif temp.name=='or':
-            KB.append(or2sentence(temp))
+            sentence = or2sentence(temp)
+            if not  ifContains(KB, sentence):
+                KB.append(sentence)
         else:
-            KB.append([temp])
+            if not  ifContains(KB, [temp]):
+                KB.append([temp])
 
 
     return KB
+
+def ifContains(KB, sentence):
+    for kbsen in KB:
+        flag = True
+        for i in range(len(kbsen)):
+            flag = flag& kbsen[i].equals(sentence[i])
+        if flag:
+            return True
+    return False
+
 

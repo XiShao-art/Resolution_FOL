@@ -1,12 +1,12 @@
 not implies ( forAll x or ( P ( x ) , Q ( x ) ) , and ( forAll x P ( x , x , x , x , x , x ) , forAll x Q ( x ) ) )
 not or ( P ( x , x , y  ) , Q ( x ) )
 forAll z ( implies ( exist x  forAll y ( P ( F ( x ) , x , y , z ) ) , exist y ( Q ( y ) ) ) )
-or ( and ( P ( x ) , Q ( x ) ) , and ( X ( x ) , Z ( x ) ) )
+or ( and ( P ( x ) , Q ( x ) ) , and ( P ( x ) , Q ( x ) ) )
 not and ( exist x  P ( x ) , forAll x  Q ( x ) )
-
+and ( and ( and ( and ( P ( x ) , P ( x ) ) , Q ( x ) ) , Z ( x ) ) , P ( x ) )
 #barber
 forAll x forAll y ( implies ( and ( B ( x ) , not S ( y , y ) ) , S ( x , y ) ) )
-not exist x ( and ( B ( x ) , S ( x , x ) ) )
+not exist x exist y ( and ( B ( x ) , S ( y , y ) ) )
 forAll x ( not B ( x ) )
 
 #worksheet2 3.1
@@ -17,3 +17,12 @@ forAll x exist y P ( y , x )
 forAll x implies ( P ( x ) , Q ( x ) )
 implies ( forAll x P ( x ) , forAll x Q ( x ) )
 
+#web 1
+forAll x ( implies ( F ( x ) , L ( j , x ) ) )
+and ( F ( a ) , F ( e ) )
+forAll x forAll y ( implies ( and ( E ( x , y ) , not K ( x ) ) , F ( y ) ) )
+and ( E ( i , g ) , A ( i ) )
+forAll x ( implies ( E ( i , x ) , E ( h , x ) ) )
+forAll x ( implies ( not K ( x ) , A ( x ) ) )
+forAll x ( implies ( A ( x ) , not K ( x ) ) )
+L ( j , g )

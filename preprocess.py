@@ -1,7 +1,4 @@
-from FOL import *
 from random import  random
-from random import choice
-from utils import  tree_print, listPrinter
 from CNF import *
 def removeImplies(sentence):
     while('implies' in sentence):
@@ -175,7 +172,10 @@ def All2Node(sentence, fol_engine):
             sentence[i] = Predicate(sentence[i])
         elif sentence[i] in fol_engine.functions:
             sentence[i] = Function(sentence[i])
+        elif type(sentence[i])==str:
+            #print(sentence[i], sentence)
 
+            assert sentence[i]=='(' or sentence[i]==')' or sentence[i]==',', 'undefined symbol'
     #convert all predicet to node
     stack = []
     for ele in sentence:

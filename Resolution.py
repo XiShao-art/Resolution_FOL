@@ -1,4 +1,4 @@
-from FOL import *
+
 from MGU import *
 from utils import *
 def xor(p1,p2):
@@ -47,6 +47,11 @@ def resolution(KB, querys, max_loops):
         if len(querys_set)==0:
             break
         sentence = querys_set[0]
+        print('sentence', end=' ')
+        listPrinter(sentence)
+        print( 'before')
+        for i in KB:
+            listPrinter(i)
         querys_set.remove(querys_set[0])
         resolve_set =resolve(sentence, KB)
         if [] in resolve_set:
@@ -54,6 +59,9 @@ def resolution(KB, querys, max_loops):
         else:
             querys_set.extend(resolve_set)
             KB.extend(resolve_set)
+        print('after')
+        for i in KB:
+            listPrinter(i)
 
     return False
 

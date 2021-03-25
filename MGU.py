@@ -1,4 +1,4 @@
-from FOL import *
+from preprocess import sentence_parse
 from utils import *
 
 
@@ -126,35 +126,17 @@ def check_fun_fun(f1:Function, f2:Function):
 some test cases
 '''
 if __name__ == '__main__':
-    p1 =    Predicate('p')
-    p2 =    Predicate('p')
-    x =     Variable('x')
-    y =     Variable('y')
-    z =     Variable('z')
-    a = Constant('a')
-    b = Constant('b')
-    g_x= Function('g_x')
-    g_y= Function('g_y')
-    g_z= Function('g_z')
-    h_x= Function('h_x')
+    fol_engine = FOL_Engine()
+    p1 = input()
+    p1 = sentence_parse(fol_engine, p1)
+    p1 = tree2KB(p1)
 
-    g_x.arguments.append(x)
-    g_x.arguments.append(y)
-
-    g_z.arguments.append(z)
-
-    g_y.arguments.append(a)
-    g_y.arguments.append(y)
-
-    g_y.name ='g_x'
-
-    p1.arguments.append(y)
-    p1.arguments.append(g_x)
-    p2.arguments.append(b)
-    p2.arguments.append(g_y)
-
-    pre,dic = MGU(p1, p2, {})
-   # print(pre, dic)
+    p2 = input()
+    p2 = sentence_parse(fol_engine, p2)
+    p2 = tree2KB(p2)
+    #listPrinter(p1)
+    pre,dic = MGU(p1[0][0], p2[0][0], {})
+    print_unify(pre,dic)
 
 
 
