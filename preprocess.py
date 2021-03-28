@@ -1,40 +1,42 @@
-from random import  random
+from random import random
 from CNF import *
+from utils import *
+
 def removeImplies(sentence):
-    while('implies' in sentence):
+    while ('implies' in sentence):
 
         for i in range(len(sentence)):
-            if sentence[i]=='implies':
+            if sentence[i] == 'implies':
                 sentence[i] = 'or'
-                sentence.insert(i+2, 'not')
+                sentence.insert(i + 2, 'not')
+
     return sentence
+
 
 def pushNegation(sentence, fol_engine):
     allNegationForward = False
-    while(not allNegationForward):
+    while (not allNegationForward):
 
         allNegationForward = True
         not_index = 0
         new_sentence = []
         for i in range(len(sentence)):
-           #print(sentence)
-            if sentence[i] == 'not' and sentence[i+1] not in fol_engine.predicates:
-
+            if sentence[i] == 'not' and sentence[i + 1] not in fol_engine.predicates:
                 allNegationForward = False
                 not_index = i
                 break
             new_sentence.append(sentence[i])
 
-        old_sentence_index = not_index+1
-        if (not allNegationForward ):
-           # print(sentence)
-            while old_sentence_index<len(sentence):
+        old_sentence_index = not_index + 1
+        if (not allNegationForward):
+
+            while old_sentence_index < len(sentence):
 
                 if sentence[old_sentence_index] == 'exist':
                     new_sentence.append('forAll')
-                    new_sentence.append(sentence[old_sentence_index+1])
+                    new_sentence.append(sentence[old_sentence_index + 1])
                     new_sentence.append('not')
-                    old_sentence_index+=2
+                    old_sentence_index += 2
                 elif sentence[old_sentence_index] == 'forAll':
                     new_sentence.append('exist')
                     new_sentence.append(sentence[old_sentence_index + 1])
@@ -46,7 +48,7 @@ def pushNegation(sentence, fol_engine):
                     old_sentence_index += 1
 
                 elif sentence[old_sentence_index] == 'not':
-                    old_sentence_index+=1
+                    old_sentence_index += 1
                 elif sentence[old_sentence_index] == 'and':
                     new_sentence.append('or')
                     new_sentence.append('(')
@@ -69,7 +71,7 @@ def pushNegation(sentence, fol_engine):
                     new_sentence.append(',')
                     old_sentence_index += 1
                     new_sentence.append('not')
-                    #print(new_sentence)
+
                 elif sentence[old_sentence_index] == 'or':
                     new_sentence.append('and')
                     new_sentence.append('(')
@@ -92,15 +94,12 @@ def pushNegation(sentence, fol_engine):
                     new_sentence.append(',')
                     old_sentence_index += 1
                     new_sentence.append('not')
-                    #print(new_sentence)
-                    #print(new_sentence)
+
                 while old_sentence_index < len(sentence):
                     new_sentence.append(sentence[old_sentence_index])
                     old_sentence_index += 1
-                    #print(new_sentence)
+
             sentence = new_sentence
-            # listPrinter((sentence))
-            # print()
 
     return sentence
 
@@ -123,7 +122,6 @@ def defineScope(sentence, fol_engine):
                     break
 
             left_range = index + 1
-            # Todo： the '(' may be not find
             for index in range(left_range, len(sentence)):
                 if leftbracket > 0:
 
@@ -142,27 +140,29 @@ def defineScope(sentence, fol_engine):
                 else:
                     break
 
-    #remove quntity
+    # remove quntity
     for i in range(len(sentence)):
         if sentence[i] in fol_engine.quantifies:
-            sentence[i]=' '
-            sentence[i+1]=' '
+            sentence[i] = ' '
+            sentence[i + 1] = ' '
     while ' ' in sentence:
         sentence.remove(' ')
     return sentence
+
 
 def VarConst2Node(sentence, fol_engine):
     for i in range(len(sentence)):
         if sentence[i] in fol_engine.constants:
             sentence[i] = Constant(sentence[i])
-        elif sentence[i] in fol_engine.variables and sentence[i-1] not in fol_engine.quantifies:
+        elif sentence[i] in fol_engine.variables and sentence[i - 1] not in fol_engine.quantifies:
             sentence[i] = Variable(sentence[i])
         elif sentence[i] in fol_engine.predicates:
             sentence[i] = Predicate(sentence[i])
-            if i>0 and sentence[i-1] =='not':
+            if i > 0 and sentence[i - 1] == 'not':
                 sentence[i].negation = True
-                sentence[i - 1]=' '
+                sentence[i - 1] = ' '
     return sentence
+
 
 def All2Node(sentence, fol_engine):
     for i in range(len(sentence)):
@@ -172,69 +172,66 @@ def All2Node(sentence, fol_engine):
             sentence[i] = Predicate(sentence[i])
         elif sentence[i] in fol_engine.functions:
             sentence[i] = Function(sentence[i])
-        elif type(sentence[i])==str:
-            #print(sentence[i], sentence)
+        elif type(sentence[i]) == str:
 
-            assert sentence[i]=='(' or sentence[i]==')' or sentence[i]==',', 'undefined symbol'
-    #convert all predicet to node
+            assert sentence[i] == '(' or sentence[i] == ')' or sentence[i] == ',', 'undefined symbol'
+    # convert all predicet to node
     stack = []
     for ele in sentence:
-        # listPrinter(stack)
-        # print()
-        if ele !=')':
+
+        if ele != ')':
             stack.append(ele)
-        elif ele ==')':
+        elif ele == ')':
             tempStack = []
             while stack[-1] != '(':
                 if stack[-1] != ',':
                     tempStack.append(stack.pop())
-                else :
+                else:
                     stack.pop()
             stack.pop()
-            if len(stack)!= 0:
-                if type(stack[-1])==Function or type(stack[-1])==Predicate:
+            if len(stack) != 0:
+                if type(stack[-1]) == Function or type(stack[-1]) == Predicate:
                     tempStack.reverse()
                     stack[-1].arguments = tempStack
                     for arg in stack[-1].arguments:
                         arg.parent = stack[-1]
-                    # listPrinter(tempStack)
-                    # print()
-                elif type(stack[-1])==Operation:
+
+                elif type(stack[-1]) == Operation:
                     tempStack.reverse()
-                    stack[-1].left  = tempStack[0]
+                    stack[-1].left = tempStack[0]
                     stack[-1].right = tempStack[1]
                     stack[-1].left.parent = stack[-1]
                     stack[-1].right.parent = stack[-1]
 
                 else:
-                    while len(tempStack)!=0:
+                    while len(tempStack) != 0:
                         stack.append(tempStack.pop())
             else:
                 while len(tempStack) != 0:
                     stack.append(tempStack.pop())
     return stack[0]
 
+
 def skolemization(root, fol_engine):
     stack = []
     stack.append(root)
-    while len(stack)!= 0:
+    while len(stack) != 0:
         temp = stack.pop()
-        if type(temp) !=Variable and type(temp) !=Constant:
+        if type(temp) != Variable and type(temp) != Constant:
             if temp.left != None:
-                stack.append(temp.left )
+                stack.append(temp.left)
             if temp.right != None:
-                stack.append(temp.right )
-            elif len(temp.arguments)!=0:
+                stack.append(temp.right)
+            elif len(temp.arguments) != 0:
 
                 for arg in temp.arguments:
                     stack.append(arg)
-        elif type(temp) ==Variable:
-            #Todo
+        elif type(temp) == Variable:
             exist = 0
             const_index = 0
             forAllList = []
             for quantity in temp.scope:
-               # print(quantity.name , temp.name , quantity.forAll)
+
                 if quantity.name != temp.name and quantity.forAll:
                     var = Variable(quantity.name)
                     forAllList.append(var)
@@ -246,13 +243,13 @@ def skolemization(root, fol_engine):
                     const_index = quantity.index
                     break
 
-            if exist == 0 : #Todo: free variable
+            if exist == 0:
                 pass
-            elif exist == 2: # no exist, no need to change
+            elif exist == 2:  # no exist, no need to change
                 pass
             elif exist == 1:
-                if len(forAllList)==0:
-                    const = Constant(fol_engine.constants[int(const_index)%len(fol_engine.constants)])
+                if len(forAllList) == 0:
+                    const = Constant(fol_engine.constants[int(const_index) % len(fol_engine.constants)])
 
                     parent = temp.parent
                     if type(parent) == Operation:
@@ -266,7 +263,7 @@ def skolemization(root, fol_engine):
                                 parent.arguments[arg_index] = const
                 else:
 
-                    func = Function('F_'+str(random()))
+                    func = Function('F_' + str(int(random()*10000)%20))
                     for var in forAllList:
                         var.parent = func
                         func.arguments.append(var)
@@ -274,7 +271,7 @@ def skolemization(root, fol_engine):
                     if type(parent) == Operation:
                         if parent.left.name == temp.name:
                             parent.left = func
-                        else :
+                        else:
                             parent.right = func
                     else:
                         for arg_index in range(len(parent.arguments)):
@@ -282,30 +279,22 @@ def skolemization(root, fol_engine):
                                 parent.arguments[arg_index] = func
     return root
 
-def sentence_parse(fol_engine: FOL_Engine, sentence: str) :
+
+def sentence_parse(fol_engine: FOL_Engine, sentence: str):
     sentence = sentence.split()
 
     sentence = removeImplies(sentence)
 
     sentence = pushNegation(sentence, fol_engine)
-    #listPrinter(sentence)
-    #print('\n')
 
     sentence = VarConst2Node(sentence, fol_engine)  # change constant and varaiable to node
 
-
     sentence = defineScope(sentence, fol_engine)
 
-    #listPrinter(sentence)
-    #print()
-
     rootNode = All2Node(sentence, fol_engine)
+
     skolemization(rootNode, fol_engine)
+
     convert2CNF(rootNode)
 
-   # tree_print(rootNode)
-
-
     return rootNode
-
-

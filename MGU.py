@@ -1,7 +1,6 @@
 from preprocess import sentence_parse
 from utils import *
 
-
 '''
 find if it have one avaliable unify and update the predicate
 run until no avaliable unfiy can be find
@@ -31,13 +30,12 @@ def MGU(p1:Predicate, p2:Predicate, allUni):
                     unify[p2.arguments[i].name] = p1.arguments[i].copy()
                     break
             elif type(p1.arguments[i])==Function and type(p2.arguments[i])==Function:
-                #print('fun  fun', unify)
                 if check_fun_fun(p1.arguments[i],p2.arguments[i]):
-                    #print('in fun')
+
                     stack1 = p1.arguments[i].arguments.copy()
                     stack2 = p2.arguments[i].arguments.copy()
                     while(True):
-                        #print(len(stack1))
+
                         if(len(stack1)==0):
                             break
                         if type(stack1[-1])==Variable:
@@ -55,7 +53,7 @@ def MGU(p1:Predicate, p2:Predicate, allUni):
                                 stack1.pop()
                                 stack2.pop()
                         elif type(stack2[-1]) == Function and type(stack1[-1]) == Function:
-                           # print(32)
+
                             stack1.extend(stack1.pop().arguments.copy())
                             stack2.extend(stack2.pop().arguments.copy())
                         else:
@@ -68,20 +66,14 @@ def MGU(p1:Predicate, p2:Predicate, allUni):
 
 
     if len(unify.keys())!=0:
-        #print(1)
         p1 = p1.copy()
         p2 = p2.copy()
         key = list(unify.keys())[-1]
-        #print('before',p1, p2, unify.keys(), unify[list(unify.keys())[0]])
         iterate_unify_pre(p1,key,unify)
         iterate_unify_pre(p2, key, unify)
-        #print('after',p1, p2, unify.keys(), unify[list(unify.keys())[0]])
-
         allUni.update(unify)
         return MGU(p1,p2, allUni)
     elif not p1.equals(p2):
-        #print(p1.equals(p2))
-        #return None, {}
         p1 = None
         allUni = {}
         return p1, allUni
@@ -119,7 +111,6 @@ def check_fun_fun(f1:Function, f2:Function):
                 flag = flag and check_var_fun(f1.arguments[i], f2.arguments[i])
             elif type(f2.arguments[i])==Variable and type(f1.arguments[i])==Function:
                 flag = flag and check_var_fun(f2.arguments[i], f1.arguments[i])
-          #  elif (type(f2.arguments[i])==Constant and type(f1.arguments[i])==Function) or :
     return flag
 
 '''
@@ -127,14 +118,18 @@ some test cases
 '''
 if __name__ == '__main__':
     fol_engine = FOL_Engine()
+    fol_engine.constants = ['a','b']#change if you want more constant
+    fol_engine.functions = ['f','h','g']#change if you want more function
+    print('input one predicate')
     p1 = input()
     p1 = sentence_parse(fol_engine, p1)
     p1 = tree2KB(p1)
 
+    print('input another predicate')
     p2 = input()
     p2 = sentence_parse(fol_engine, p2)
     p2 = tree2KB(p2)
-    #listPrinter(p1)
+
     pre,dic = MGU(p1[0][0], p2[0][0], {})
     print_unify(pre,dic)
 

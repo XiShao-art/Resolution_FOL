@@ -1,6 +1,5 @@
 from FOL import *
-
-#Todo: remove redundancy
+from preprocess import *
 def convert2CNF(root):
     if type(root)!= Operation or root ==None:
         return
@@ -41,6 +40,11 @@ def convert2CNF(root):
     convert2CNF(root.left)
     convert2CNF(root.right)
 
-if __name__ == '__main__':
-    pass
+if __name__ == '__main__' :
+    sentence = input()
+    fol_engine = FOL_Engine()
+    root = sentence_parse(fol_engine, sentence)
+    KB=tree2KB(root)
+    for i in KB:
+        listPrinter(i)
 

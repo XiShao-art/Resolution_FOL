@@ -1,4 +1,3 @@
-
 from MGU import *
 from utils import *
 def xor(p1,p2):
@@ -14,6 +13,7 @@ def resolve2sentences(sentence, kb_sentence):
                     sentence.remove(sentence[sen_index])
                     kb_sentence.remove(kb_sentence[kbsen_index])
                     sentence.extend(kb_sentence)
+                    sentence.sort(key = getKey)
                     return(sentence)
                 else:
                     pre, dic = MGU(sentence[sen_index],kb_sentence[kbsen_index],{})
@@ -23,6 +23,7 @@ def resolve2sentences(sentence, kb_sentence):
                         sentence.remove(sentence[sen_index])
                         kb_sentence.remove(kb_sentence[kbsen_index])
                         sentence.extend(kb_sentence)
+                        sentence.sort(key=getKey)
                         return (sentence)
 
     return None
@@ -30,11 +31,12 @@ def resolve2sentences(sentence, kb_sentence):
 def resolve(sentence, KB):
     resolve_set = []
     for kb_sentence in KB:
-        #print(sentence[0], kb_sentence[0])
+
         result = resolve2sentences(sentence, kb_sentence)
-        #listPrinter(result)
+
 
         if result!=None:
+            remove_or_redundance(result)
             resolve_set.append(result)
     return resolve_set
 
@@ -47,24 +49,19 @@ def resolution(KB, querys, max_loops):
         if len(querys_set)==0:
             break
         sentence = querys_set[0]
-        print('sentence', end=' ')
-        listPrinter(sentence)
-        print( 'before')
-        for i in KB:
-            listPrinter(i)
+        sentence.sort(key = getKey)
+
+
         querys_set.remove(querys_set[0])
         resolve_set =resolve(sentence, KB)
         if [] in resolve_set:
             return True
         else:
             querys_set.extend(resolve_set)
-            KB.extend(resolve_set)
-        print('after')
-        for i in KB:
-            listPrinter(i)
-
+            for sen in resolve_set:
+                if not ifContains(KB,sen):
+                    KB.append(sen)
     return False
-
 
 if __name__ =='__main__':
     KB = []
@@ -75,7 +72,7 @@ if __name__ =='__main__':
     b = Constant('b')
     p1 = Predicate('p1')
     p1.negation=True
-    p1.arguments.append(a)
+    p1.arguments.append(x)
 
     p2 = Predicate('p2')
     p2.negation = True
@@ -93,11 +90,9 @@ if __name__ =='__main__':
     p5.negation = False
     p5.arguments.append(b)
 
-
-
     KB.append([p1,p2])
     KB.append([p3, p4])
     querys.append([p5])
 
-    print(resolution(KB,querys,10000))
+    print(resolution(KB,querys,100))
 

@@ -1,12 +1,18 @@
-not implies ( forAll x or ( P ( x ) , Q ( x ) ) , and ( forAll x P ( x , x , x , x , x , x ) , forAll x Q ( x ) ) )
 not or ( P ( x , x , y  ) , Q ( x ) )
-forAll z ( implies ( exist x  forAll y ( P ( F ( x ) , x , y , z ) ) , exist y ( Q ( y ) ) ) )
-or ( and ( P ( x ) , Q ( x ) ) , and ( P ( x ) , Q ( x ) ) )
 not and ( exist x  P ( x ) , forAll x  Q ( x ) )
-and ( and ( and ( and ( P ( x ) , P ( x ) ) , Q ( x ) ) , Z ( x ) ) , P ( x ) )
+and ( and ( and ( or ( P ( x ) , P ( x ) ) , Q ( x ) ) , Z ( x ) ) , P ( x ) )
+not exist x ( implies ( P ( x ) , forAll y  P ( y ) ) )
+and ( and ( P ( x ) , P ( x ) ) , not P ( x ) )
+
+#worksheet1 5
+implies (  forAll x or ( P ( x ) , Q ( x ) ) , or ( forAll x P ( x ) , forAll x Q ( x ) ) )
+implies ( and ( forAll x P ( x ) , forAll x Q ( x ) ) , forAll x and ( P ( x ) , Q ( x ) ) )
+implies ( exist x forAll y P ( x , y ) , forAll y exist x P ( x , y )  )
+implies (  forAll y exist x P ( x , y ) , exist x forAll y P ( x , y ) )
+
 #barber
 forAll x forAll y ( implies ( and ( B ( x ) , not S ( y , y ) ) , S ( x , y ) ) )
-not exist x exist y ( and ( B ( x ) , S ( y , y ) ) )
+forAll x forAll y ( implies ( and ( B ( x ) , S ( y , y ) ) , not S ( x , y ) ) )
 forAll x ( not B ( x ) )
 
 #worksheet2 3.1
